@@ -4,37 +4,61 @@
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ]
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
       }
     }
   },
   "workspaceLayout": {
-    "projectNameAndRootFormat": "as-provided"
+    "projectNameAndRootFormat": "as-provided",
+    "appsDir": "apps",
+    "libsDir": "libs"
   },
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "e2e": {
+      "inputs": ["default", "^production"]
+    },
+    "lint": {
       "inputs": [
-        "production",
-        "^production"
+        "default",
+        "{workspaceRoot}/.eslintrc.json",
+        "{workspaceRoot}/.eslintignore",
+        "{workspaceRoot}/eslint.config.js"
       ]
+    },
+    "test": {
+      "inputs": ["default", "^production"]
     }
   },
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
-      "default"
+      "default",
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/eslint.config.js",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json"
     ],
     "sharedGlobals": []
+  },
+  "plugins": ["@nxext/vue"],
+  "generators": {
+    "@nxext/vue": {
+      "application": {
+        "linter": "eslint"
+      },
+      "component": {},
+      "library": {
+        "linter": "eslint"
+      }
+    },
+    "@nxext/nuxt": {
+      "application": {
+        "linter": "eslint"
+      }
+    }
   }
 }
